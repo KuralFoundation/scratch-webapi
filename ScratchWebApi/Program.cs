@@ -1,3 +1,5 @@
+using ScratchWebApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,6 +14,15 @@ builder.Services.AddCors(policyBuilder =>
         policy.WithOrigins("*").AllowAnyHeader().AllowAnyHeader())
 );
 
+builder.Services.AddTransient<QuotesRepository>(sp =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("QuotesDatabase");
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Connection string 'QuotesDatabase' is not found.");
+    }
+    return new QuotesRepository(connectionString);
+});
 var app = builder.Build();
 
 app.UseCors();
