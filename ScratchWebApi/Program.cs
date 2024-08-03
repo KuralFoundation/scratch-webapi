@@ -23,6 +23,17 @@ builder.Services.AddTransient<QuotesRepository>(sp =>
     }
     return new QuotesRepository(connectionString);
 });
+
+builder.Services.AddTransient<UserRepository>(sp =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("QuotesDatabase");
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Connection string 'QuotesDatabase' is not found.");
+    }
+    return new UserRepository(connectionString);
+});
+
 var app = builder.Build();
 
 app.UseCors();
